@@ -11,6 +11,7 @@
     <script>
         // Check if the Web NFC API is supported in the browser
         if ('NDEFReader' in window) {
+            alert('NFC enabled.');
             const nfcReader = new NDEFReader();
 
             // Add event listener to handle when an NFC tag is found
