@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NFC Serial Number Reader</title>
+</head>
+
+<body>
+    <script>
+        // Check if the Web NFC API is supported in the browser
+        if ('NDEFReader' in window) {
+            const nfcReader = new NDEFReader();
+
+            // Add event listener to handle when an NFC tag is found
+            nfcReader.addEventListener('reading', async event => {
+                try {
+                    // Read the NFC tag
+                    await nfcReader.scan();
+                    const serialNumber = event.serialNumber;
+
+                    // Display the serial number using an alert
+                    alert(`Serial Number: ${serialNumber}`);
+                } catch (error) {
+                    console.error('Error reading NFC tag:', error);
+                }
+            });
+
+            // Start scanning for NFC tags
+            nfcReader.scan()
+                .catch(error => {
+                    console.error('Error starting NFC scan:', error);
+                });
+        } else {
+            // Web NFC API is not supported in this browser
+            alert('Web NFC API is not supported in this browser.');
+        }
+    </script>
+</body>
+
+</html>
