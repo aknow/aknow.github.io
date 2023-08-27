@@ -5,39 +5,94 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NFC Serial Number Reader</title>
+    <style>
+        #logArea {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-top: 10px;
+            height: 200px;
+            overflow: auto;
+        }
+    </style>
 </head>
 
 <body>
+
+    <button id="scan">Scan</button>
+    <div id="logArea"></div>
+
     <script>
+        const logArea = document.getElementById('logArea');
+
+        // Custom log function to append messages to the log area
+        function log(message) {
+            const logEntry = document.createElement('p');
+            logEntry.textContent = message;
+            logArea.appendChild(logEntry);
+
+            // Scroll to the bottom to show the latest log entry
+            logArea.scrollTop = logArea.scrollHeight;
+        }
+
         // Check if the Web NFC API is supported in the browser
-        if ('NDEFReader' in window) {
-            const nfcReader = new NDEFReader();
-            await ndef.scan();
+        if (!('NDEFReader' in window)) {
+            // Web NFC API is not supported in this browser
+            log('Web NFC API is not supported in this browser.');
 
-            // Add event listener to handle when an NFC tag is found
-            nfcReader.addEventListener('reading', async event => {
+            // const nfcReader = new NDEFReader();
+            // await ndef.scan();
+
+            // // Add event listener to handle when an NFC tag is found
+            // nfcReader.addEventListener('reading', async event => {
+            //     try {
+            //         // Read the NFC tag
+            //         await nfcReader.scan();
+            //         const serialNumber = event.serialNumber;
+
+            //         // Display the serial number using an alert
+            //         alert(`Serial Number: ${serialNumber}`);
+            //     } catch (error) {
+            //         console.error('Error reading NFC tag:', error);
+            //     }
+            // });
+
+            // // Start scanning for NFC tags
+            // nfcReader.scan()
+            //     .catch(error => {
+            //         console.error('Error starting NFC scan:', error);
+            //     });
+        } else {
+            // Add a click event handler to the button
+            const scanButton = document.getElementById('scan');
+
+            scanButton.addEventListener("click", async() => {
+                log("User clicked scan button");
+
                 try {
-                    // Read the NFC tag
-                    await nfcReader.scan();
-                    const serialNumber = event.serialNumber;
+                    const ndef = new NDEFReader();
+                    await ndef.scan();
+                    log("> Scan started");
 
-                    // Display the serial number using an alert
-                    alert(`Serial Number: ${serialNumber}`);
+                    ndef.addEventListener("readingerror", () => {
+                        log("Argh! Cannot read data from the NFC tag. Try another one?");
+                    });
+
+                    ndef.addEventListener("reading", ({
+                        message,
+                        serialNumber
+                    }) => {
+                        log(`> Serial Number: ${serialNumber}`);
+                        log(`> Records: (${message.records.length})`);
+                    });
                 } catch (error) {
-                    console.error('Error reading NFC tag:', error);
+                    log("Argh! " + error);
                 }
             });
-
-            // Start scanning for NFC tags
-            nfcReader.scan()
-                .catch(error => {
-                    console.error('Error starting NFC scan:', error);
-                });
-        } else {
-            // Web NFC API is not supported in this browser
-            alert('Web NFC API is not supported in this browser.');
         }
     </script>
+
+
 </body>
+
 
 </html>
