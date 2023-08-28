@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NFC Serial Number Reader</title>
+    <title>NFC</title>
     <style>
         #logArea {
             border: 1px solid #ccc;
@@ -13,12 +13,71 @@
             height: 200px;
             overflow: auto;
         }
+        
+        body {
+            /* display: flex;
+            justify-content: center;
+            align-items: center; */
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+            padding: 20px;
+        }
+        
+        .radio-button {
+            display: inline-block;
+            margin: 5px;
+        }
+        
+        .radio-button input[type="radio"] {
+            display: none;
+        }
+        
+        .radio-button label {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #ffffff;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        
+        .radio-button input[type="radio"]:checked+label {
+            background-color: #007bff;
+            color: #ffffff;
+        }
     </style>
 </head>
 
 <body>
+    <div class="button-container">
+        <div class="radio-button">
+            <input type="radio" id="balance" name="options" checked>
+            <label for="balance">Balance</label>
+        </div>
+        <div class="radio-button">
+            <input type="radio" id="add" name="options">
+            <label for="add">+ $10</label>
+        </div>
+        <div class="radio-button">
+            <input type="radio" id="minus" name="options">
+            <label for="minus">- $10</label>
+        </div>
+        <div class="radio-button">
+            <input type="radio" id="reset" name="options">
+            <label for="reset">Reset</label>
+        </div>
+    </div>
 
-    <button id="scan">Scan</button>
+    <button id="showSelected">Show Selected Option</button>
+    <p id="selectedOptionText"></p>
+
     <div id="logArea"></div>
 
     <script>
@@ -34,65 +93,46 @@
             logArea.scrollTop = logArea.scrollHeight;
         }
 
+        function getAction() {
+            const selectedOption = document.querySelector('input[name="options"]:checked');
+            return selectedOption ? selectedOption.id : 'balance';
+        }
+
         // Check if the Web NFC API is supported in the browser
         if (!('NDEFReader' in window)) {
             // Web NFC API is not supported in this browser
             log('Web NFC API is not supported in this browser.');
-
-            // const nfcReader = new NDEFReader();
-            // await ndef.scan();
-
-            // // Add event listener to handle when an NFC tag is found
-            // nfcReader.addEventListener('reading', async event => {
-            //     try {
-            //         // Read the NFC tag
-            //         await nfcReader.scan();
-            //         const serialNumber = event.serialNumber;
-
-            //         // Display the serial number using an alert
-            //         alert(`Serial Number: ${serialNumber}`);
-            //     } catch (error) {
-            //         console.error('Error reading NFC tag:', error);
-            //     }
-            // });
-
-            // // Start scanning for NFC tags
-            // nfcReader.scan()
-            //     .catch(error => {
-            //         console.error('Error starting NFC scan:', error);
-            //     });
         } else {
-            // Add a click event handler to the button
-            const scanButton = document.getElementById('scan');
+            const ndef = new NDEFReader();
 
-            scanButton.addEventListener("click", async() => {
-                log("User clicked scan button");
-
-                try {
-                    const ndef = new NDEFReader();
-                    await ndef.scan();
-                    log("> Scan started");
-
-                    ndef.addEventListener("readingerror", () => {
-                        log("Argh! Cannot read data from the NFC tag. Try another one?");
-                    });
-
-                    ndef.addEventListener("reading", ({
-                        message,
-                        serialNumber
-                    }) => {
-                        log(`> Serial Number: ${serialNumber}`);
-                        log(`> Records: (${message.records.length})`);
-                    });
-                } catch (error) {
-                    log("Argh! " + error);
-                }
+            ndef.addEventListener("readingerror", () => {
+                log("Argh! Cannot use this card. Try another one?");
             });
+
+            ndef.addEventListener("reading", ({
+                message,
+                serialNumber
+            }) => {
+                log(`> Serial Number: ${serialNumber}`);
+                log(`> Records: (${message.records.length})`);
+
+                const action = getAction();
+                alert(`${action}: ${serialNumber}`);
+            });
+
+            log("> Scan started");
+            ndef.scan();
         }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            const showSelectedButton = document.getElementById("showSelected");
+            const selectedOptionText = document.getElementById("selectedOptionText");
+
+            showSelectedButton.addEventListener("click", function() {
+                selectedOptionText.textContent = `${getAction()}`;
+            });
+        });
     </script>
-
-
 </body>
-
 
 </html>
