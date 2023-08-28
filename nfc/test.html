@@ -26,12 +26,12 @@
         .button-container {
             display: flex;
             justify-content: space-between;
-            padding: 20px;
+            padding: 10px;
         }
         
         .radio-button {
             display: inline-block;
-            margin: 5px;
+            margin: 4px;
         }
         
         .radio-button input[type="radio"] {
@@ -40,7 +40,7 @@
         
         .radio-button label {
             display: inline-block;
-            padding: 10px 20px;
+            padding: 10px 10px;
             background-color: #ffffff;
             border: 1px solid #ccc;
             border-radius: 5px;
@@ -75,8 +75,7 @@
         </div>
     </div>
 
-    <button id="showSelected">Show Selected Option</button>
-    <p id="selectedOptionText"></p>
+    <button id="test" style="display:none">Test</button>
 
     <div id="logArea"></div>
 
@@ -98,6 +97,37 @@
             return selectedOption ? selectedOption.id : 'balance';
         }
 
+        function execute(cardID, action) {
+            const balanceData = localStorage.getItem("balance");
+            if (!balanceData) {
+                allBalance = new Map([
+                    ["dummy", 0]
+                ]);
+                localStorage.setItem("balance", JSON.stringify([...allBalance]));
+            } else {
+                allBalance = new Map(JSON.parse(balanceData));
+            }
+
+            cardBalance = allBalance.has(cardID) ? allBalance.get(cardID) : 0;
+            log(`Card balance: ${cardBalance}`);
+
+            switch (action) {
+                case 'add':
+                    cardBalance += 10;
+                    break;
+                case 'minus':
+                    cardBalance -= 10;
+                    break;
+                case 'reset':
+                    cardBalance = 0;
+                    break;
+            }
+            log(`New card balance: ${cardBalance}`);
+
+            allBalance.set(cardID, cardBalance);
+            localStorage.setItem("balance", JSON.stringify([...allBalance]));
+        }
+
         // Check if the Web NFC API is supported in the browser
         if (!('NDEFReader' in window)) {
             // Web NFC API is not supported in this browser
@@ -113,11 +143,9 @@
                 message,
                 serialNumber
             }) => {
-                log(`> Serial Number: ${serialNumber}`);
-                log(`> Records: (${message.records.length})`);
-
                 const action = getAction();
-                alert(`${action}: ${serialNumber}`);
+                log(`> ${action} - ${serialNumber}`);
+                // log(`> Records: (${message.records.length})`);
             });
 
             log("> Scan started");
@@ -125,11 +153,9 @@
         }
 
         document.addEventListener("DOMContentLoaded", function() {
-            const showSelectedButton = document.getElementById("showSelected");
-            const selectedOptionText = document.getElementById("selectedOptionText");
-
-            showSelectedButton.addEventListener("click", function() {
-                selectedOptionText.textContent = `${getAction()}`;
+            const testButton = document.getElementById("test");
+            testButton.addEventListener("click", function() {
+                execute('TEST_CARD_ID', getAction());
             });
         });
     </script>
