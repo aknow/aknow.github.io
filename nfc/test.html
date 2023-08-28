@@ -145,6 +145,7 @@
             }) => {
                 const action = getAction();
                 log(`> ${action} - ${serialNumber}`);
+                execute(serialNumber, action);
                 // log(`> Records: (${message.records.length})`);
             });
 
