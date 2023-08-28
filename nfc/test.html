@@ -126,6 +126,7 @@
 
             allBalance.set(cardID, cardBalance);
             localStorage.setItem("balance", JSON.stringify([...allBalance]));
+            alert(`Current Balance: ${cardBalance}`);
         }
 
         // Check if the Web NFC API is supported in the browser
