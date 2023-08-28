@@ -166,21 +166,26 @@
 
         // Function to request NFC permission
         async function requestPermission() {
+            log("User clicked scan button");
+
             try {
-                const permission = await navigator.permissions.query({
-                    name: "nfc"
+                const ndef = new NDEFReader();
+                await ndef.scan();
+                log("> Scan started");
+
+                ndef.addEventListener("readingerror", () => {
+                    log("Argh! Cannot read data from the NFC tag. Try another one?");
                 });
 
-                if (permission.state === "prompt") {
-                    await permission.request();
-                    console.log("NFC permission granted!");
-                } else if (permission.state === "denied") {
-                    console.log("NFC permission denied.");
-                } else if (permission.state === "granted") {
-                    console.log("NFC permission already granted.");
-                }
+                ndef.addEventListener("reading", ({
+                    message,
+                    serialNumber
+                }) => {
+                    log(`> Serial Number: ${serialNumber}`);
+                    log(`> Records: (${message.records.length})`);
+                });
             } catch (error) {
-                console.error("Error requesting NFC permission:", error);
+                log("Argh! " + error);
             }
         }
 
