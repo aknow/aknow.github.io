@@ -76,6 +76,7 @@
     </div>
 
     <button id="test" style="display:none">Test</button>
+    <button id="scanButton">Test Scan</button>
 
     <div id="logArea"></div>
 
@@ -159,6 +160,30 @@
             testButton.addEventListener("click", function() {
                 execute('TEST_CARD_ID', getAction());
             });
+        });
+
+        scanButton.addEventListener("click", async() => {
+            log("User clicked scan button");
+
+            try {
+                const ndef = new NDEFReader();
+                await ndef.scan();
+                log("> Scan started");
+
+                ndef.addEventListener("readingerror", () => {
+                    log("Argh! Cannot read data from the NFC tag. Try another one?");
+                });
+
+                ndef.addEventListener("reading", ({
+                    message,
+                    serialNumber
+                }) => {
+                    log(`> Serial Number: ${serialNumber}`);
+                    log(`> Records: (${message.records.length})`);
+                });
+            } catch (error) {
+                log("Argh! " + error);
+            }
         });
     </script>
 </body>
