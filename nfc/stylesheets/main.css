@@ -1,0 +1,13 @@
+#logArea {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-top: 10px;
+    height: 200px;
+    overflow: auto;
+}
+
+body {
+    height: 100vh;
+    margin: 0;
+    background-color: #f0f0f0;
+}

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="stylesheets/main.css">
+    <link rel="stylesheet" type="text/css" href="stylesheets/keypad.css">
+    <link rel="stylesheet" type="text/css" href="stylesheets/action.css">
+    <title>逼逼卡</title>
+</head>
+
+<body>
+    <!-- Action -->
+    <div class="button-container">
+        <div class="radio-button">
+            <input type="radio" id="balance" name="options" onchange="actionChange(this)" checked>
+            <label for="balance">Check Balance</label>
+        </div>
+        <div class="radio-button">
+            <input type="radio" id="minus" name="options" onchange="actionChange(this)">
+            <label for="minus">Pay</label>
+        </div>
+        <div class="radio-button">
+            <input type="radio" id="add" name="options" onchange="actionChange(this)">
+            <label for="add">Reload Balance</label>
+        </div>
+        <!-- <div class="radio-button">
+            <input type="radio" id="reset" name="options">
+            <label for="reset">Reset</label>
+        </div> -->
+    </div>
+
+    <!-- Keypad -->
+    <div class="keypad" id="keypad">
+        <input type="text" id="inputField" value="0" readonly>
+        <div class="keys">
+            <button class="key">1</button>
+            <button class="key">2</button>
+            <button class="key">3</button>
+            <button class="key">4</button>
+            <button class="key">5</button>
+            <button class="key">6</button>
+            <button class="key">7</button>
+            <button class="key">8</button>
+            <button class="key">9</button>
+            <button class="key">0</button>
+            <button id="clearButoon" class="key clear">Clear</button>
+        </div>
+    </div>
+
+    <!-- Debugging -->
+    <script>
+        // Get the current URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const debug = urlParams.get('debug');
+
+        // Check if parameters exist and display them
+        if (debug) {
+            document.write('<button id="requestNFCPermission">Request Permission</button>');
+            document.write('<button id="reset">Reset</button>');
+            document.write('<button id="test">Test Scan</button>');
+            document.write('<div id="logArea"></div>');
+        } else {
+            document.write('<div id="logArea" style="display: none"></div>');
+        }
+    </script>
+
+    <script src="javascripts/log.js"></script>
+    <script src="javascripts/keypad.js"></script>
+    <script src="javascripts/action.js"></script>
+    <script src="javascripts/nfc.js"></script>
+</body>
+
+</html>
