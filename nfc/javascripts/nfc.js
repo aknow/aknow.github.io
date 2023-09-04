@@ -68,4 +68,11 @@ document.addEventListener("DOMContentLoaded", function() {
             execute('TEST_CARD_ID', getAction());
         });
     }
+
+    const customAlertButton = document.getElementById('customAlertButton');
+    if (customAlertButton) {
+        customAlertButton.onclick = function() {
+            customAlertModal.style.display = 'block';
+        }
+    }
 });

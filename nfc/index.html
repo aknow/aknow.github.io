@@ -7,6 +7,7 @@
     <link rel="stylesheet" type="text/css" href="stylesheets/main.css">
     <link rel="stylesheet" type="text/css" href="stylesheets/keypad.css">
     <link rel="stylesheet" type="text/css" href="stylesheets/action.css">
+    <link rel="stylesheet" type="text/css" href="stylesheets/dialog.css">
     <title>逼逼卡</title>
 </head>
 
@@ -49,6 +50,15 @@
         </div>
     </div>
 
+    <!-- Dialog -->
+    <div id="customAlertModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <p class="custom-message">This is the default message.</p>
+            <button id="okButton">OK</button>
+        </div>
+    </div>
+
     <!-- Debugging -->
     <script>
         // Get the current URL
@@ -60,6 +70,7 @@
             document.write('<button id="requestNFCPermission">Request Permission</button>');
             document.write('<button id="reset">Reset</button>');
             document.write('<button id="test">Test Scan</button>');
+            document.write('<button id="customAlertButton">Show Custom Alert</button>');
             document.write('<div id="logArea"></div>');
         } else {
             document.write('<div id="logArea" style="display: none"></div>');
@@ -67,6 +78,7 @@
     </script>
 
     <script src="javascripts/log.js"></script>
+    <script src="javascripts/dialog.js"></script>
     <script src="javascripts/keypad.js"></script>
     <script src="javascripts/action.js"></script>
     <script src="javascripts/nfc.js"></script>

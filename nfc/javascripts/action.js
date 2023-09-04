@@ -53,6 +53,11 @@ function execute(cardID, action) {
 
     const amount = getAmountFromInput();
 
+    if (action === 'minus' && amount > cardBalance) {
+        showNotEnoughBalanceDialog(cardBalance);
+        return;
+    }
+
     switch (action) {
         case 'add':
             cardBalance += amount;
@@ -65,7 +70,8 @@ function execute(cardID, action) {
 
     allBalance.set(cardID, cardBalance);
     setBalance(allBalance);
-    alert(`Current Balance: ${cardBalance}`);
+    // alert(`Current Balance: ${cardBalance}`);
+    showBalanceDialog(cardBalance);
 
     const clearButton = document.getElementById('clearButoon');
     clearButton.click();
