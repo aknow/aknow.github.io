@@ -4,21 +4,75 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="styles.css">
-    <title>Scroll-to-Reveal</title>
+    <title>Scrolling Images</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            height: 300vh;
+            /* Adjust this value depending on your content */
+            /* overflow: hidden; */
+        }
+        
+        .image-container {
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+        
+        .image {
+            max-width: 100%;
+            max-height: 100%;
+            width: auto;
+            height: auto;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            opacity: 0;
+            transition: opacity 1s ease;
+        }
+        
+        .image.active {
+            opacity: 1;
+        }
+    </style>
 </head>
 
 <body>
-    <div class="section">
-        <div class="content first"></div>
+    <div class="image-container">
+        <img class="image active" src="images/butterfly.png" alt="Image 1">
     </div>
-    <div class="section">
-        <div class="content second"></div>
+    <div class="image-container">
+        <img class="image" src="images/crafty_zoo_1.png" alt="Image 2">
     </div>
-    <div class="section">
-        <div class="content third"></div>
+    <div class="image-container">
+        <img class="image" src="images/crafty_zoo_2.png" alt="Image 3">
     </div>
-    <script src="script.js"></script>
+
+    <script>
+        const images = document.querySelectorAll('.image');
+        let currentImageIndex = 0;
+
+        function handleScroll() {
+            const scrollPosition = window.scrollY;
+            const imageHeight = window.innerHeight;
+
+            const newIndex = Math.floor(scrollPosition / imageHeight);
+
+            if (newIndex !== currentImageIndex) {
+                images[currentImageIndex].classList.remove('active');
+                images[newIndex].classList.add('active');
+                currentImageIndex = newIndex;
+            }
+        }
+
+        window.addEventListener('scroll', handleScroll);
+    </script>
 </body>
 
 </html>
