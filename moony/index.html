@@ -1,35 +1,24 @@
-const sections = document.querySelectorAll('.section');
-let currentSection = 0;
-let isScrolling = false;
+<!DOCTYPE html>
+<html lang="en">
 
-function scrollToSection(index) {
-    sections[index].scrollIntoView({ behavior: 'smooth' });
-}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>Scroll-to-Reveal</title>
+</head>
 
-function handleScroll() {
-    if (!isScrolling) {
-        isScrolling = true;
-        setTimeout(() => {
-            isScrolling = false;
-            const scrollPosition = window.scrollY || window.pageYOffset || document.documentElement.scrollTop;
-            const windowHeight = window.innerHeight;
-            const sectionHeight = sections[currentSection].offsetHeight;
+<body>
+    <div class="section">
+        <div class="content first"></div>
+    </div>
+    <div class="section">
+        <div class="content second"></div>
+    </div>
+    <div class="section">
+        <div class="content third"></div>
+    </div>
+    <script src="script.js"></script>
+</body>
 
-            if (scrollPosition >= currentSection * sectionHeight + windowHeight / 2) {
-                currentSection++;
-                if (currentSection < sections.length) {
-                    scrollToSection(currentSection);
-                }
-            } else if (scrollPosition < currentSection * sectionHeight - windowHeight / 2 && currentSection > 0) {
-                currentSection--;
-                scrollToSection(currentSection);
-            }
-        }, 100); // Adjust the delay if needed
-    }
-}
-
-window.addEventListener('scroll', handleScroll);
-
-window.addEventListener('DOMContentLoaded', () => {
-    scrollToSection(currentSection);
-});
+</html>

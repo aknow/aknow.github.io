@@ -1,34 +1,40 @@
 const sections = document.querySelectorAll('.section');
 let currentSection = 0;
-let isScrolling = false;
+let touchStartY = null;
 
 function scrollToSection(index) {
     sections[index].scrollIntoView({ behavior: 'smooth' });
 }
 
-function handleScroll() {
-    if (!isScrolling) {
-        isScrolling = true;
-        setTimeout(() => {
-            isScrolling = false;
-            const scrollPosition = window.scrollY || window.pageYOffset || document.documentElement.scrollTop;
-            const windowHeight = window.innerHeight;
-            const sectionHeight = sections[currentSection].offsetHeight;
-
-            if (scrollPosition >= currentSection * sectionHeight + windowHeight / 2) {
-                currentSection++;
-                if (currentSection < sections.length) {
-                    scrollToSection(currentSection);
-                }
-            } else if (scrollPosition < currentSection * sectionHeight - windowHeight / 2 && currentSection > 0) {
-                currentSection--;
-                scrollToSection(currentSection);
-            }
-        }, 100); // Adjust the delay if needed
-    }
+function handleTouchStart(event) {
+    touchStartY = event.touches[0].clientY;
 }
 
-window.addEventListener('scroll', handleScroll);
+function handleTouchMove(event) {
+    if (touchStartY === null) return;
+
+    const touchEndY = event.touches[0].clientY;
+    const deltaY = touchEndY - touchStartY;
+
+    if (deltaY > 50) {
+        // Scrolling down
+        if (currentSection < sections.length - 1) {
+            currentSection++;
+            scrollToSection(currentSection);
+        }
+    } else if (deltaY < -50) {
+        // Scrolling up
+        if (currentSection > 0) {
+            currentSection--;
+            scrollToSection(currentSection);
+        }
+    }
+
+    touchStartY = null;
+}
+
+document.addEventListener('touchstart', handleTouchStart);
+document.addEventListener('touchmove', handleTouchMove);
 
 window.addEventListener('DOMContentLoaded', () => {
     scrollToSection(currentSection);
