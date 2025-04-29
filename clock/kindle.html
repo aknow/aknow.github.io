@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="refresh" content="60">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clock</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: white;
+            font-family: sans-serif;
+            font-size: 10vmin;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div>
+        <div>
+            <script>
+                var now = new Date();
+                var hours = now.getHours();
+                var minutes = now.getMinutes();
+                var ampm = "AM";
+                if (hours >= 12) {
+                    ampm = "PM";
+                }
+                if (hours > 12) {
+                    hours = hours - 12;
+                }
+                if (hours == 0) {
+                    hours = 12;
+                }
+                if (minutes < 10) {
+                    minutes = "0" + minutes;
+                }
+                if (hours < 10) {
+                    hours = "0" + hours;
+                }
+                document.write(hours + ":" + minutes + " <small>" + ampm + "</small>");
+            </script>
+        </div>
+    </div>
+</body>
+
+</html>
