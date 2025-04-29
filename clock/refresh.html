@@ -46,11 +46,10 @@
             }
         }
         
-        .date-row {
-            font-size: 48px;
+        .date-row,
+        .weather-row {
             margin-top: 40px;
-            display: block;
-            text-align: center;
+            font-size: 36px;
         }
     </style>
 </head>
@@ -61,6 +60,7 @@
             <div class="clock" id="time">--:--</div>
             <div class="ampm" id="ampm">--</div>
             <div id="dateRow" class="date-row"></div>
+            <div id="weatherRow" class="weather-row">Loading weather...</div>
         </div>
     </div>
 
@@ -93,10 +93,31 @@
 
             document.getElementById("time").innerText = hours + ":" + minutes;
             document.getElementById("ampm").innerText = ampm;
-            document.getElementById("dateRow").innerText = `${month} ${date}, ${weekday}`;
+            document.getElementById("dateRow").innerText = month + " " + date + ", " + weekday;
         }
 
-        updateClock(); // Run once at load
+        function fetchWeather() {
+            // Mountain View lat/lon
+            var url = "https://api.open-meteo.com/v1/forecast?latitude=37.3861&longitude=-122.0839&current_weather=true";
+            fetch(url)
+                .then(function(res) {
+                    return res.json();
+                })
+                .then(function(data) {
+                    var tempC = data.current_weather.temperature;
+                    document.getElementById("weatherRow").innerText = "🌡️ " + tempC.toFixed(1) + "°C in Mountain View";
+                })
+                .catch(function() {
+                    document.getElementById("weatherRow").innerText = "Weather unavailable.";
+                });
+        }
+
+        updateClock();
+        fetchWeather();
+        setInterval(updateClock, 60000); // Update clock every minute
+        setInterval(fetchWeather, 10 * 60 * 1000); // Update weather every 10 minutes
+
+        // updateClock(); // Run once at load
     </script>
 </body>
 
