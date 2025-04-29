@@ -1,50 +1,77 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Clock</title>
     <style>
+        html,
         body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            background: white;
+            font-family: Arial, sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            margin: 0;
-            background: white;
-            font-family: sans-serif;
         }
         
-        #time {
-            font-size: 15vw;
+        .clock {
+            display: flex;
+            align-items: center;
+            font-size: 240px;
             font-weight: bold;
         }
         
-        .ampm {
-            font-size: 5vw;
-            vertical-align: super;
+        #hourmin {
+            margin-right: 20px;
+        }
+        
+        .side {
+            display: flex;
+            flex-direction: column;
+            font-size: 96px;
+            text-align: left;
         }
     </style>
 </head>
 
 <body>
-    <div id="time"></div>
+    <div class="clock">
+        <div id="hourmin">--:--</div>
+        <div class="side">
+            <div id="seconds">--</div>
+            <div id="ampm">--</div>
+        </div>
+    </div>
 
     <script>
-        function updateTime() {
-            const now = new Date();
-            let hours = now.getHours();
-            let minutes = now.getMinutes().toString().padStart(2, '0');
-            const ampm = hours >= 12 ? 'PM' : 'AM';
-            hours = hours % 12;
-            hours = hours ? hours : 12; // the hour '0' should be '12'
-            hours = hours.toString().padStart(2, '0');
-            document.getElementById('time').innerHTML = `${hours}:${minutes} <span class="ampm">${ampm}</span>`;
+        function updateClock() {
+            var now = new Date();
+            var utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+            var pacific = new Date(utc - (7 * 60 * 60000));
+            var hours = pacific.getHours();
+            var minutes = pacific.getMinutes();
+            var seconds = pacific.getSeconds();
+            var ampm = "AM";
+
+            if (hours >= 12) ampm = "PM";
+            if (hours > 12) hours -= 12;
+            if (hours == 0) hours = 12;
+            if (minutes < 10) minutes = "0" + minutes;
+            if (seconds < 10) seconds = "0" + seconds;
+            if (hours < 10) hours = "0" + hours;
+
+            document.getElementById("hourmin").innerText = hours + ":" + minutes;
+            document.getElementById("seconds").innerText = seconds;
+            document.getElementById("ampm").innerText = ampm;
         }
 
-        updateTime();
-        setInterval(updateTime, 60000); // update every minute
+        updateClock(); // initial call
+        setInterval(updateClock, 1000); // update every 1 second
     </script>
 </body>
 
