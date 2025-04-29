@@ -68,12 +68,12 @@ body {
 .toggle-label {
     display: inline-block;
     vertical-align: middle;
-    font-size: 16px;
+    font-size: 28px;
     font-weight: bold;
 }
 
 .toggle-label {
-    margin-left: 12px;
+    margin-left: 16px;
 }
 
 
@@ -82,9 +82,9 @@ body {
 .switch {
     position: relative;
     display: inline-block;
-    width: 52px;
+    width: 80px;
     /* slightly larger to accommodate border */
-    height: 30px;
+    height: 44px;
 }
 
 .switch input {
@@ -112,10 +112,10 @@ body {
 .slider:before {
     position: absolute;
     content: "";
-    height: 22px;
-    width: 22px;
-    left: 2px;
-    top: 2px;
+    height: 34px;
+    width: 34px;
+    left: 3px;
+    top: 3px;
     background-color: #fff;
     border-radius: 50%;
 }
@@ -125,5 +125,6 @@ input:checked+.slider {
 }
 
 input:checked+.slider:before {
-    transform: translateX(22px);
+    left: 40px;
+    /* manually move knob to the right */
 }
