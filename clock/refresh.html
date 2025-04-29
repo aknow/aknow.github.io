@@ -97,19 +97,23 @@
         }
 
         function fetchWeather() {
-            // Mountain View lat/lon
             var url = "https://api.open-meteo.com/v1/forecast?latitude=37.3861&longitude=-122.0839&current_weather=true";
-            fetch(url)
-                .then(function(res) {
-                    return res.json();
-                })
-                .then(function(data) {
-                    var tempC = data.current_weather.temperature;
-                    document.getElementById("weatherRow").innerText = "🌡️ " + tempC.toFixed(1) + "°C in Mountain View";
-                })
-                .catch(function() {
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", url, true);
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    try {
+                        var data = JSON.parse(xhr.responseText);
+                        var tempC = data.current_weather.temperature;
+                        document.getElementById("weatherRow").innerText = "🌡️ " + tempC.toFixed(1) + "°C in Mountain View";
+                    } catch (e) {
+                        document.getElementById("weatherRow").innerText = "Weather parse error.";
+                    }
+                } else if (xhr.readyState === 4) {
                     document.getElementById("weatherRow").innerText = "Weather unavailable.";
-                });
+                }
+            };
+            xhr.send();
         }
 
         updateClock();
