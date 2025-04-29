@@ -1,0 +1,57 @@
+html,
+body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background: white;
+    font-family: Arial, sans-serif;
+    text-align: center;
+    overflow: hidden;
+}
+
+.wrapper {
+    display: inline-block;
+    height: 100%;
+}
+
+.clock {
+    display: table;
+    width: 100%;
+    height: 100%;
+    font-size: 240px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.clock div {
+    display: table-cell;
+    vertical-align: middle;
+}
+
+#hourmin {
+    padding-right: 40px;
+    text-align: right;
+}
+
+.side {
+    font-size: 96px;
+    text-align: left;
+}
+
+.clock {
+    font-size: 160px;
+}
+
+.side {
+    font-size: 64px;
+}
+
+@media (min-width: 1072px) {
+    .clock {
+        font-size: 240px;
+    }
+    .side {
+        font-size: 96px;
+    }
+}
