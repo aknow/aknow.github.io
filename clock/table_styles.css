@@ -59,7 +59,7 @@ body {
 
 .toggle-container {
     text-align: center;
-    margin-top: 20px;
+    margin-top: 40px;
     font-size: 0;
     /* remove inline spacing gap */
 }
@@ -68,12 +68,12 @@ body {
 .toggle-label {
     display: inline-block;
     vertical-align: middle;
-    font-size: 28px;
+    font-size: 48px;
     font-weight: bold;
 }
 
 .toggle-label {
-    margin-left: 16px;
+    margin-left: 24px;
 }
 
 
@@ -82,9 +82,9 @@ body {
 .switch {
     position: relative;
     display: inline-block;
-    width: 80px;
+    width: 120px;
     /* slightly larger to accommodate border */
-    height: 44px;
+    height: 66px;
 }
 
 .switch input {
@@ -102,9 +102,9 @@ body {
     bottom: 0;
     background-color: #888;
     /* medium gray */
-    border: 2px solid #000;
+    border: 3px solid #000;
     /* black border for contrast */
-    border-radius: 34px;
+    border-radius: 50px;
     box-sizing: border-box;
     /* include border in size */
 }
@@ -112,8 +112,8 @@ body {
 .slider:before {
     position: absolute;
     content: "";
-    height: 34px;
-    width: 34px;
+    height: 54px;
+    width: 54px;
     left: 3px;
     top: 3px;
     background-color: #fff;
@@ -125,6 +125,6 @@ input:checked+.slider {
 }
 
 input:checked+.slider:before {
-    left: 40px;
+    left: 58px;
     /* manually move knob to the right */
 }
