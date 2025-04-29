@@ -105,7 +105,7 @@
                     try {
                         var data = JSON.parse(xhr.responseText);
                         var tempC = data.current_weather.temperature;
-                        document.getElementById("weatherRow").innerText = "🌡️ " + tempC.toFixed(1) + "°C in Mountain View";
+                        document.getElementById("weatherRow").innerText = tempC.toFixed(1) + "°C in Mountain View";
                     } catch (e) {
                         document.getElementById("weatherRow").innerText = "Weather parse error.";
                     }
