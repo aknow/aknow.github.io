@@ -14,25 +14,35 @@
             padding: 0;
             background: white;
             font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            text-align: center;
+            overflow: hidden;
+        }
+        
+        .wrapper {
+            display: inline-block;
+            height: 100%;
         }
         
         .clock {
-            display: flex;
-            align-items: center;
+            display: table;
+            width: 100%;
+            height: 100%;
             font-size: 240px;
             font-weight: bold;
+            text-align: center;
+        }
+        
+        .clock div {
+            display: table-cell;
+            vertical-align: middle;
         }
         
         #hourmin {
-            margin-right: 20px;
+            padding-right: 40px;
+            text-align: right;
         }
         
         .side {
-            display: flex;
-            flex-direction: column;
             font-size: 96px;
             text-align: left;
         }
@@ -40,11 +50,19 @@
 </head>
 
 <body>
-    <div class="clock">
-        <div id="hourmin">--:--</div>
-        <div class="side">
-            <div id="seconds">--</div>
-            <div id="ampm">--</div>
+    <div class="wrapper">
+        <div class="clock">
+            <div id="hourmin">--:--</div>
+            <div class="side">
+                <table>
+                    <tr>
+                        <td id="seconds">--</td>
+                    </tr>
+                    <tr>
+                        <td id="ampm">--</td>
+                    </tr>
+                </table>
+            </div>
         </div>
     </div>
 
