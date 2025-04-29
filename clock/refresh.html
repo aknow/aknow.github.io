@@ -82,14 +82,14 @@
             if (hours < 10) hours = "0" + hours;
 
 
-            const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-            const months = ["January", "February", "March", "April", "May", "June",
+            var days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+            var months = ["January", "February", "March", "April", "May", "June",
                 "July", "August", "September", "October", "November", "December"
             ];
 
-            const weekday = days[pacific.getDay()];
-            const month = months[pacific.getMonth()];
-            const date = pacific.getDate();
+            var weekday = days[pacific.getDay()];
+            var month = months[pacific.getMonth()];
+            var date = pacific.getDate();
 
             document.getElementById("time").innerText = hours + ":" + minutes;
             document.getElementById("ampm").innerText = ampm;
