@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clock</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: white;
+            font-family: sans-serif;
+        }
+        
+        #time {
+            font-size: 15vw;
+            font-weight: bold;
+        }
+        
+        .ampm {
+            font-size: 5vw;
+            vertical-align: super;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="time"></div>
+
+    <script>
+        function updateTime() {
+            const now = new Date();
+            let hours = now.getHours();
+            let minutes = now.getMinutes().toString().padStart(2, '0');
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            hours = hours % 12;
+            hours = hours ? hours : 12; // the hour '0' should be '12'
+            hours = hours.toString().padStart(2, '0');
+            document.getElementById('time').innerHTML = `${hours}:${minutes} <span class="ampm">${ampm}</span>`;
+        }
+
+        updateTime();
+        setInterval(updateTime, 60000); // update every minute
+    </script>
+</body>
+
+</html>
