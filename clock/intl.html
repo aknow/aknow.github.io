@@ -27,7 +27,7 @@
 
     <script>
         function updateClock() {
-            const formatter = new Intl.DateTimeFormat('en-US', {
+            var formatter = new Intl.DateTimeFormat('en-US', {
                 timeZone: 'America/Los_Angeles',
                 hour: '2-digit',
                 minute: '2-digit',
@@ -35,14 +35,14 @@
                 hour12: true
             });
 
-            const parts = formatter.formatToParts(new Date());
-            let hour = '',
+            var parts = formatter.formatToParts(new Date());
+            var hour = '',
                 minute = '',
                 second = '',
                 ampm = '';
 
             for (const part of parts) {
-                if (part.type === 'hour') hour = part.value.padStart(2, '0');
+                if (part.type === 'hour') hour = part.value;
                 if (part.type === 'minute') minute = part.value;
                 if (part.type === 'second') second = part.value;
                 if (part.type === 'dayPeriod') ampm = part.value.toUpperCase();
