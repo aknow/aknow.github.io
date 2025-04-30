@@ -28,41 +28,29 @@
             display: table-cell;
             vertical-align: middle;
         }
+        /* Time */
         
         .clock {
-            font-size: 160px;
+            font-size: 140px;
         }
         
         .ampm {
-            font-size: 64px;
-        }
-        
-        @media (min-width: 1072px) {
-            .clock {
-                font-size: 240px;
-            }
-            .ampm {
-                font-size: 96px;
-            }
-        }
-        
-        .date-row {
-            margin-top: 40px;
-            margin-bottom: 40px;
             font-size: 48px;
         }
+        /* Date */
         
-        .weather-row {
-            font-size: 32px;
-            margin-bottom: 10px;
+        .date-row {
+            margin-top: 30px;
+            margin-bottom: 30px;
+            font-size: 40px;
         }
+        /* Weather Layout */
         
         .weather-table {
             width: 100%;
             table-layout: fixed;
             font-family: monospace;
             text-align: center;
-            /* center contents inside <td> */
         }
         
         .weather-block {
@@ -71,21 +59,54 @@
         }
         
         .label {
-            font-size: 32px;
-            margin-bottom: 16px;
+            font-size: 30px;
+            margin-bottom: 12px;
         }
         
         .range-label {
-            font-size: 28px;
-            margin-bottom: 8px;
+            font-size: 26px;
+            margin-bottom: 6px;
+        }
+        
+        .weather-desc {
+            font-size: 22px;
+            margin-bottom: 10px;
         }
         
         .hourly-chart {
-            font-size: 24px;
+            font-size: 22px;
             display: inline-block;
-            /* allows centering inside table cell */
             text-align: left;
-            /* left-align the chart text itself */
+            white-space: pre;
+        }
+        /* Larger screens */
+        
+        @media (min-width: 1072px) {
+            .clock {
+                font-size: 200px;
+            }
+            .ampm {
+                font-size: 72px;
+            }
+            .date-row {
+                font-size: 48px;
+                margin-top: 40px;
+                margin-bottom: 40px;
+            }
+            .label {
+                font-size: 36px;
+                margin-bottom: 14px;
+            }
+            .range-label {
+                font-size: 30px;
+                margin-bottom: 8px;
+            }
+            .weather-desc {
+                font-size: 26px;
+            }
+            .hourly-chart {
+                font-size: 24px;
+            }
         }
     </style>
 </head>
@@ -99,13 +120,15 @@
             <table class="weather-table">
                 <tr>
                     <td class="weather-block">
-                        <div class="label">Today</div>
+                        <div id="todayLabel" class="label">Today</div>
                         <div id="todayRange" class="range-label"></div>
+                        <div id="todayDesc" class="weather-desc"></div>
                         <pre id="todayChart" class="hourly-chart"></pre>
                     </td>
                     <td class="weather-block">
-                        <div class="label">Tomorrow</div>
+                        <div id="tomorrowLabel" class="label">Tomorrow</div>
                         <div id="tomorrowRange" class="range-label"></div>
+                        <div id="tomorrowDesc" class="weather-desc"></div>
                         <pre id="tomorrowChart" class="hourly-chart"></pre>
                     </td>
                 </tr>
@@ -153,6 +176,40 @@
             }
         }
 
+        function weatherCodeToDescription(code) {
+            var map = {
+                0: "Clear sky",
+                1: "Mainly clear",
+                2: "Partly cloudy",
+                3: "Overcast",
+                45: "Fog",
+                48: "Depositing rime fog",
+                51: "Light drizzle",
+                53: "Moderate drizzle",
+                55: "Dense drizzle",
+                56: "Freezing drizzle",
+                57: "Freezing drizzle (dense)",
+                61: "Light rain",
+                63: "Moderate rain",
+                65: "Heavy rain",
+                66: "Freezing rain (light)",
+                67: "Freezing rain (heavy)",
+                71: "Light snow",
+                73: "Moderate snow",
+                75: "Heavy snow",
+                77: "Snow grains",
+                80: "Light rain showers",
+                81: "Moderate rain showers",
+                82: "Violent rain showers",
+                85: "Light snow showers",
+                86: "Heavy snow showers",
+                95: "Thunderstorm",
+                96: "Thunderstorm with hail (light)",
+                99: "Thunderstorm with hail (heavy)"
+            };
+            return map[code] || "Unknown";
+        }
+
         function mapTempToBlock(temp, min, max) {
             var blocks = ["▏", "▎", "▍", "▌", "▋", "▊", "▉", "█"];
             var index = Math.floor((temp - min) / (max - min) * (blocks.length - 1));
@@ -162,7 +219,7 @@
         }
 
         function fetchTodayTomorrowWeather() {
-            var url = "https://api.open-meteo.com/v1/forecast?latitude=37.3861&longitude=-122.0839&daily=temperature_2m_min,temperature_2m_max&hourly=temperature_2m&timezone=America%2FLos_Angeles";
+            var url = "https://api.open-meteo.com/v1/forecast?latitude=37.3861&longitude=-122.0839&daily=temperature_2m_min,temperature_2m_max,weathercode&hourly=temperature_2m&timezone=America%2FLos_Angeles";
             var xhr = new XMLHttpRequest();
             xhr.open("GET", url, true);
             xhr.onreadystatechange = function() {
@@ -173,16 +230,25 @@
                         var times = data.hourly.time;
                         var todayDate = data.daily.time[0];
                         var tomorrowDate = data.daily.time[1];
+                        var todayCode = data.daily.weathercode[0];
 
                         var todayMin = data.daily.temperature_2m_min[0];
                         var todayMax = data.daily.temperature_2m_max[0];
                         var tomorrowMin = data.daily.temperature_2m_min[1];
                         var tomorrowMax = data.daily.temperature_2m_max[1];
+                        var tomorrowCode = data.daily.weathercode[1];
 
                         document.getElementById("todayRange").innerText =
                             todayMin + "°C – " + todayMax + "°C";
                         document.getElementById("tomorrowRange").innerText =
                             tomorrowMin + "°C – " + tomorrowMax + "°C";
+
+
+                        var todayDesc = weatherCodeToDescription(todayCode);
+                        var tomorrowDesc = weatherCodeToDescription(tomorrowCode);
+
+                        document.getElementById("todayDesc").innerText = todayDesc;
+                        document.getElementById("tomorrowDesc").innerText = tomorrowDesc;
 
                         var todayChart = "";
                         var tomorrowChart = "";
