@@ -31,18 +31,18 @@
         /* Time */
         
         .clock {
-            font-size: 140px;
+            font-size: 180px;
         }
         
         .ampm {
-            font-size: 48px;
+            font-size: 56px;
         }
         /* Date */
         
         .date-row {
             margin-top: 30px;
             margin-bottom: 30px;
-            font-size: 40px;
+            font-size: 48px;
         }
         /* Weather Layout */
         
@@ -83,15 +83,15 @@
         
         @media (min-width: 1072px) {
             .clock {
-                font-size: 200px;
+                font-size: 260px;
             }
             .ampm {
-                font-size: 72px;
+                font-size: 84px;
             }
             .date-row {
-                font-size: 48px;
-                margin-top: 40px;
-                margin-bottom: 40px;
+                font-size: 64px;
+                margin-top: 50px;
+                margin-bottom: 50px;
             }
             .label {
                 font-size: 36px;
@@ -239,10 +239,10 @@
                         var tomorrowCode = data.daily.weathercode[1];
 
                         document.getElementById("todayRange").innerText =
-                            todayMin + "°C – " + todayMax + "°C";
-                        document.getElementById("tomorrowRange").innerText =
-                            tomorrowMin + "°C – " + tomorrowMax + "°C";
+                            Math.round(todayMin) + "°C – " + Math.round(todayMax) + "°C";
 
+                        document.getElementById("tomorrowRange").innerText =
+                            Math.round(tomorrowMin) + "°C – " + Math.round(tomorrowMax) + "°C";
 
                         var todayDesc = weatherCodeToDescription(todayCode);
                         var tomorrowDesc = weatherCodeToDescription(tomorrowCode);
