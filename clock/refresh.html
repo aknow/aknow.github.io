@@ -46,10 +46,41 @@
             }
         }
         
-        .date-row,
-        .weather-row {
+        .date-row {
             margin-top: 40px;
+            margin-bottom: 40px;
             font-size: 36px;
+        }
+        
+        .weather-row {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        
+        .weather-table {
+            width: 100%;
+            table-layout: fixed;
+            font-family: monospace;
+            text-align: center;
+            /* center contents inside <td> */
+        }
+        
+        .weather-block {
+            vertical-align: top;
+            padding: 10px;
+        }
+        
+        .range-label {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+        
+        .hourly-chart {
+            font-size: 24px;
+            display: inline-block;
+            /* allows centering inside table cell */
+            text-align: left;
+            /* left-align the chart text itself */
         }
     </style>
 </head>
@@ -60,11 +91,24 @@
             <div class="clock" id="time">--:--</div>
             <div class="ampm" id="ampm">--</div>
             <div id="dateRow" class="date-row"></div>
-            <div id="weatherRow" class="weather-row">Loading weather...</div>
+            <table class="weather-table">
+                <tr>
+                    <td class="weather-block">
+                        <div id="todayRange" class="range-label"></div>
+                        <pre id="todayChart" class="hourly-chart"></pre>
+                    </td>
+                    <td class="weather-block">
+                        <div id="tomorrowRange" class="range-label"></div>
+                        <pre id="tomorrowChart" class="hourly-chart"></pre>
+                    </td>
+                </tr>
+            </table>
         </div>
     </div>
 
     <script>
+        var lastKnownDay = null;
+
         function updateClock() {
             var now = new Date();
             var utc = now.getTime() + (now.getTimezoneOffset() * 60000);
@@ -94,32 +138,107 @@
             document.getElementById("time").innerText = hours + ":" + minutes;
             document.getElementById("ampm").innerText = ampm;
             document.getElementById("dateRow").innerText = month + " " + date + ", " + weekday;
+
+            var todayKey = pacific.getFullYear() + "-" + (pacific.getMonth() + 1) + "-" + pacific.getDate();
+            if (lastKnownDay !== todayKey) {
+                lastKnownDay = todayKey;
+                fetchTodayTomorrowWeather(); // refresh weather on new day
+            }
         }
 
-        function fetchWeather() {
-            var url = "https://api.open-meteo.com/v1/forecast?latitude=37.3861&longitude=-122.0839&current_weather=true";
+        function mapTempToBlock(temp, min, max) {
+            var blocks = ["▏", "▎", "▍", "▌", "▋", "▊", "▉", "█"];
+            var index = Math.floor((temp - min) / (max - min) * (blocks.length - 1));
+            if (index < 0) index = 0;
+            if (index >= blocks.length) index = blocks.length - 1;
+            return blocks[index];
+        }
+
+        function fetchTodayTomorrowWeather() {
+            var url = "https://api.open-meteo.com/v1/forecast?latitude=37.3861&longitude=-122.0839&daily=temperature_2m_min,temperature_2m_max&hourly=temperature_2m&timezone=America%2FLos_Angeles";
             var xhr = new XMLHttpRequest();
             xhr.open("GET", url, true);
             xhr.onreadystatechange = function() {
                 if (xhr.readyState === 4 && xhr.status === 200) {
                     try {
                         var data = JSON.parse(xhr.responseText);
-                        var tempC = data.current_weather.temperature;
-                        document.getElementById("weatherRow").innerText = tempC.toFixed(1) + "°C in Mountain View";
+                        var temps = data.hourly.temperature_2m;
+                        var times = data.hourly.time;
+                        var todayDate = data.daily.time[0];
+                        var tomorrowDate = data.daily.time[1];
+
+                        var todayMin = data.daily.temperature_2m_min[0];
+                        var todayMax = data.daily.temperature_2m_max[0];
+                        var tomorrowMin = data.daily.temperature_2m_min[1];
+                        var tomorrowMax = data.daily.temperature_2m_max[1];
+
+                        document.getElementById("todayRange").innerText =
+                            "Today: " + todayMin + "°C–" + todayMax + "°C";
+                        document.getElementById("tomorrowRange").innerText =
+                            "Tomorrow: " + tomorrowMin + "°C–" + tomorrowMax + "°C";
+
+                        var todayChart = "";
+                        var tomorrowChart = "";
+                        var minToday = 1000,
+                            maxToday = -1000;
+                        var minTomorrow = 1000,
+                            maxTomorrow = -1000;
+
+                        // First pass: find min/max for 07:00–19:00
+                        for (var i = 0; i < times.length; i++) {
+                            var date = times[i].substring(0, 10);
+                            var hour = parseInt(times[i].substring(11, 13), 10);
+                            var temp = temps[i];
+
+                            if (hour >= 7 && hour <= 19) {
+                                if (date === todayDate) {
+                                    if (temp < minToday) minToday = temp;
+                                    if (temp > maxToday) maxToday = temp;
+                                } else if (date === tomorrowDate) {
+                                    if (temp < minTomorrow) minTomorrow = temp;
+                                    if (temp > maxTomorrow) maxTomorrow = temp;
+                                }
+                            }
+                        }
+
+                        // Second pass: build chart
+                        for (var j = 0; j < times.length; j++) {
+                            var date = times[j].substring(0, 10);
+                            var time = times[j].substring(11, 16);
+                            var hour = parseInt(times[j].substring(11, 13), 10);
+                            var temp = temps[j];
+
+                            if (hour >= 7 && hour <= 19) {
+                                if (date === todayDate) {
+                                    var block = mapTempToBlock(temp, minToday, maxToday);
+                                    todayChart += time + " " + block + " " + temp + "°C\n";
+                                } else if (date === tomorrowDate) {
+                                    var block = mapTempToBlock(temp, minTomorrow, maxTomorrow);
+                                    tomorrowChart += time + " " + block + " " + temp + "°C\n";
+                                }
+                            }
+                        }
+
+                        document.getElementById("todayChart").innerText = todayChart;
+                        document.getElementById("tomorrowChart").innerText = tomorrowChart;
+
                     } catch (e) {
-                        document.getElementById("weatherRow").innerText = "Weather parse error.";
+                        document.getElementById("todayRange").innerText = "Parse error.";
+                        document.getElementById("tomorrowRange").innerText = "";
                     }
                 } else if (xhr.readyState === 4) {
-                    document.getElementById("weatherRow").innerText = "Weather unavailable.";
+                    document.getElementById("todayRange").innerText = "Weather unavailable.";
+                    document.getElementById("tomorrowRange").innerText = "";
                 }
             };
             xhr.send();
         }
 
         updateClock();
-        fetchWeather();
+        fetchTodayTomorrowWeather();
+
         setInterval(updateClock, 60000); // Update clock every minute
-        setInterval(fetchWeather, 10 * 60 * 1000); // Update weather every 10 minutes
+        setInterval(fetchTodayTomorrowWeather, 60 * 60 * 1000); // update weather every 1 hour
 
         // updateClock(); // Run once at load
     </script>
